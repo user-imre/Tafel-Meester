@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tafel Meester</title>
+    <title>Tafel Kampioen</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
@@ -24,32 +24,31 @@
         .hidden {
             display: none;
         }
-        /* Style for number input to remove spinners on Chrome, Safari, Edge, Opera */
+        /* Style for number input to remove spinners */
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
           -webkit-appearance: none;
           margin: 0;
         }
-        /* Style for number input to remove spinners on Firefox */
         input[type=number] {
           -moz-appearance: textfield;
         }
         .keypad-btn {
-            @apply bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-full text-5xl transition-transform duration-100 active:scale-95 flex items-center justify-center;
-            aspect-ratio: 1 / 1; /* This ensures the button is a perfect circle */
+            @apply bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-full text-4xl transition-transform duration-100 active:scale-95 flex items-center justify-center;
+            aspect-ratio: 1 / 1; /* Ensures the button is a perfect circle */
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-200 flex items-center justify-center min-h-screen p-4">
-    <div class="w-full max-w-2xl mx-auto">
-        <header class="text-center mb-8">
+<body class="bg-gray-900 text-gray-200 flex flex-col items-center justify-center min-h-screen p-4">
+    <div class="w-full max-w-md mx-auto flex flex-col h-full">
+        <header class="text-center mb-6 flex-shrink-0">
             <h1 class="text-7xl font-extrabold text-[#FF9CE9]">Tafel Meester</h1>
             <p class="text-xl text-gray-400 mt-3">Oefen als een leerling, reken als een meester</p>
         </header>
 
-        <main class="bg-black rounded-xl shadow-lg p-8 md:p-12">
+        <main class="bg-black rounded-xl shadow-lg p-6 md:p-12 flex-grow flex flex-col">
             <!-- Session Stats -->
-            <div id="session-stats" class="max-w-md mx-auto mb-6 text-lg">
+            <div id="session-stats" class="max-w-md mx-auto mb-6 text-lg w-full">
                 <div id="session-progress" class="font-semibold text-gray-300 text-center mb-2">Som 1 van 20</div>
                 <div id="progress-bar-container" class="w-full bg-gray-700 rounded-full h-5">
                     <div class="flex h-5 rounded-full overflow-hidden">
@@ -60,8 +59,8 @@
             </div>
 
             <!-- Practice Section -->
-            <div id="practice-section" class="text-center flex flex-col justify-between" style="min-height: 480px;">
-                <div id="problem-container" class="text-7xl md:text-8xl font-bold text-white h-28 flex items-center justify-center">
+            <div id="practice-section" class="text-center flex-grow flex flex-col justify-between">
+                <div id="problem-container" class="text-7xl md:text-8xl font-bold text-white flex items-center justify-center flex-shrink-0 h-28">
                     <span id="num1"></span>
                     <span class="mx-4">×</span>
                     <span id="num2"></span>
@@ -69,15 +68,15 @@
                     <span id="question-mark">?</span>
                 </div>
 
-                <div>
-                    <div class="max-w-md mx-auto">
+                <div class="flex-grow flex flex-col justify-end">
+                    <div class="max-w-md mx-auto w-full">
                         <!-- Desktop Input -->
                         <input type="number" id="answer-input" class="w-full text-center text-2xl p-3 border-2 bg-gray-800 border-gray-700 text-white placeholder-gray-500 rounded-xl custom-focus-ring transition duration-200 mb-4 hidden md:block" placeholder="Antwoord">
                         
                         <!-- Mobile Answer Display & Keypad -->
                         <div id="mobile-keypad-container" class="w-full md:hidden">
                             <div id="mobile-answer-display" class="w-full text-center text-3xl p-3 bg-gray-800 text-white rounded-xl mb-4 min-h-[56px] flex items-center justify-center"></div>
-                            <div id="keypad" class="grid grid-cols-3 gap-4 mt-4">
+                            <div id="keypad" class="grid grid-cols-3 gap-3 mt-4">
                                 <button class="keypad-btn" data-key="1">1</button>
                                 <button class="keypad-btn" data-key="2">2</button>
                                 <button class="keypad-btn" data-key="3">3</button>
@@ -99,7 +98,7 @@
                         </div>
                     </div>
                     
-                    <div id="feedback-message" class="mt-4 h-8 text-2xl font-semibold transition-opacity duration-300"></div>
+                    <div id="feedback-message" class="mt-4 h-8 text-2xl font-semibold transition-opacity duration-300 flex-shrink-0"></div>
                 </div>
             </div>
             
@@ -111,11 +110,11 @@
             </div>
 
             <!-- Hardest Problems Section Toggle -->
-            <div class="text-center mt-12 border-t-2 border-gray-800 pt-8">
+            <div class="text-center mt-8 border-t-2 border-gray-800 pt-6 flex-shrink-0">
                 <button id="toggle-stats-btn" class="text-[#FF9CE9] hover:text-pink-300 font-semibold py-2 px-4">Toon moeilijkste sommen</button>
             </div>
             
-            <div id="stats-section" class="hidden mt-6">
+            <div id="stats-section" class="hidden mt-6 flex-shrink-0">
                  <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-100">Moeilijkste Sommen</h2>
                     <button id="reset-btn" class="bg-[#FF8DA1] hover:brightness-90 text-black font-semibold py-2 px-4 rounded-xl text-sm transition duration-200 custom-focus-ring">Scores Wissen</button>
@@ -245,7 +244,7 @@
             answerInput.disabled = true;
             knowItBtn.classList.add('hidden');
             calculatedBtn.classList.add('hidden');
-            feedbackMessage.className = 'mt-4 h-8 text-2xl font-semibold transition-opacity duration-300';
+            feedbackMessage.className = 'mt-4 h-8 text-2xl font-semibold transition-opacity duration-300 flex-shrink-0';
             const problemToUpdate = problems.find(p => p.num1 === currentProblem.num1 && p.num2 === currentProblem.num2);
 
             if (userAnswer === currentProblem.answer) {
@@ -345,8 +344,9 @@
 
         // Keypad logic
         keypad.addEventListener('click', (e) => {
-            if (e.target.dataset.key) {
-                mobileAnswer += e.target.dataset.key;
+            const key = e.target.closest('.keypad-btn')?.dataset?.key;
+            if (key) {
+                mobileAnswer += key;
                 mobileAnswerDisplay.textContent = mobileAnswer;
             }
         });
