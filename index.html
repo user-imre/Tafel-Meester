@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tafel Kampioen</title>
+    <title>Tafel Meester</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light+Two&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Outfit', sans-serif;
-            touch-action: manipulation;
+            touch-action: manipulation; /* Prevents double-tap zoom on mobile */
         }
         h1 {
             font-family: 'Shadows Into Light Two', cursive;
@@ -27,11 +27,11 @@
         /* Style for number input to remove spinners */
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
+            -webkit-appearance: none;
+            margin: 0;
         }
         input[type=number] {
-          -moz-appearance: textfield;
+            -moz-appearance: textfield;
         }
         .keypad-btn {
             @apply bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-full text-4xl transition-transform duration-100 active:scale-95 flex items-center justify-center;
@@ -39,14 +39,17 @@
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-200 flex flex-col items-center justify-center min-h-screen p-4">
-    <div class="w-full max-w-md mx-auto flex flex-col h-full">
+<!-- MODIFICATION: Changed justify-center to justify-start sm:justify-center to prevent content being cut off on short viewports -->
+<body class="bg-gray-900 text-gray-200 flex flex-col items-center justify-start sm:justify-center min-h-screen p-4">
+    <!-- MODIFICATION: Removed h-full -->
+    <div class="w-full max-w-md mx-auto flex flex-col">
         <header class="text-center mb-6 flex-shrink-0">
             <h1 class="text-7xl font-extrabold text-[#FF9CE9]">Tafel Meester</h1>
             <p class="text-xl text-gray-400 mt-3">Oefen als een leerling, reken als een meester</p>
         </header>
 
-        <main class="bg-black rounded-xl shadow-lg p-6 md:p-12 flex-grow flex flex-col">
+        <!-- MODIFICATION: Removed flex-grow -->
+        <main class="bg-black rounded-xl shadow-lg p-6 md:p-12 flex flex-col">
             <!-- Session Stats -->
             <div id="session-stats" class="max-w-md mx-auto mb-6 text-lg w-full">
                 <div id="session-progress" class="font-semibold text-gray-300 text-center mb-2">Som 1 van 20</div>
@@ -59,7 +62,8 @@
             </div>
 
             <!-- Practice Section -->
-            <div id="practice-section" class="text-center flex-grow flex flex-col justify-between">
+            <!-- MODIFICATION: Removed flex-grow and justify-between, added gap-6 for consistent spacing -->
+            <div id="practice-section" class="text-center flex flex-col gap-6">
                 <div id="problem-container" class="text-7xl md:text-8xl font-bold text-white flex items-center justify-center flex-shrink-0 h-28">
                     <span id="num1"></span>
                     <span class="mx-4">×</span>
@@ -68,7 +72,8 @@
                     <span id="question-mark">?</span>
                 </div>
 
-                <div class="flex-grow flex flex-col justify-end">
+                <!-- MODIFICATION: Removed flex-grow and justify-end from the inner div -->
+                <div>
                     <div class="max-w-md mx-auto w-full">
                         <!-- Desktop Input -->
                         <input type="number" id="answer-input" class="w-full text-center text-2xl p-3 border-2 bg-gray-800 border-gray-700 text-white placeholder-gray-500 rounded-xl custom-focus-ring transition duration-200 mb-4 hidden md:block" placeholder="Antwoord">
@@ -118,10 +123,10 @@
                  <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-100">Moeilijkste Sommen</h2>
                     <button id="reset-btn" class="bg-[#FF8DA1] hover:brightness-90 text-black font-semibold py-2 px-4 rounded-xl text-sm transition duration-200 custom-focus-ring">Scores Wissen</button>
-                </div>
-                <div id="hardest-problems-list" class="space-y-3">
-                    <p class="text-gray-400">Je hebt nog geen fouten gemaakt. Blijf oefenen!</p>
-                </div>
+                 </div>
+                 <div id="hardest-problems-list" class="space-y-3">
+                     <p class="text-gray-400">Je hebt nog geen fouten gemaakt. Blijf oefenen!</p>
+                 </div>
             </div>
         </main>
     </div>
@@ -265,7 +270,7 @@
             saveProgress();
             updateHardestProblemsList();
             updateSessionDisplay();
-            setTimeout(generateProblem, 500);
+            setTimeout(generateProblem, 1200); // Increased delay for better feedback reading
         }
 
         function updateHardestProblemsList() {
@@ -315,12 +320,12 @@
         }
 
         function resetScores() {
-            if (confirm('Weet je zeker dat je al je scores wilt wissen? Je voortgang gaat verloren.')) {
-                localStorage.removeItem('multiplicationProblems');
-                initializeProblems();
-                updateHardestProblemsList();
-                startNewSession();
-            }
+            // MODIFICATION: Removed the confirm() dialog as it's unreliable in this environment.
+            // The action now happens immediately on click.
+            localStorage.removeItem('multiplicationProblems');
+            initializeProblems();
+            updateHardestProblemsList();
+            startNewSession();
         }
 
         // --- Event Listeners ---
@@ -346,8 +351,10 @@
         keypad.addEventListener('click', (e) => {
             const key = e.target.closest('.keypad-btn')?.dataset?.key;
             if (key) {
-                mobileAnswer += key;
-                mobileAnswerDisplay.textContent = mobileAnswer;
+                if (mobileAnswer.length < 4) { // Limit input length
+                    mobileAnswer += key;
+                    mobileAnswerDisplay.textContent = mobileAnswer;
+                }
             }
         });
 
@@ -374,4 +381,3 @@
     </script>
 </body>
 </html>
-
