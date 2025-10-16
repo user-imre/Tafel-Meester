@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tafel Kampioen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light+Two&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            touch-action: manipulation;
+        }
+        h1 {
+            font-family: 'Shadows Into Light Two', cursive;
+        }
+        .custom-focus-ring:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.6); /* Adjusted for dark theme */
+        }
+        .hidden {
+            display: none;
+        }
+        /* Style for number input to remove spinners on Chrome, Safari, Edge, Opera */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+        /* Style for number input to remove spinners on Firefox */
+        input[type=number] {
+          -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 flex items-center justify-center min-h-screen p-4">
+    <div class="w-full max-w-2xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-7xl font-extrabold text-[#FF9CE9]">Tafel Meester</h1>
+            <p class="text-xl text-gray-400 mt-3">Oefen als een leerling, reken als een meester</p>
+        </header>
+
+        <main class="bg-black rounded-xl shadow-lg p-8 md:p-12">
+            <!-- Session Stats -->
+            <div id="session-stats" class="max-w-md mx-auto mb-6 text-lg">
+                <div id="session-progress" class="font-semibold text-gray-300 text-center mb-2">Som 1 van 20</div>
+                <div id="progress-bar-container" class="w-full bg-gray-700 rounded-full h-5">
+                    <div class="flex h-5 rounded-full overflow-hidden">
+                        <div id="correct-progress" class="bg-[#AD56C4] transition-all duration-300 ease-out" style="width: 0%"></div>
+                        <div id="incorrect-progress" class="bg-[#FF8DA1] transition-all duration-300 ease-out" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Section -->
+            <div id="practice-section" class="text-center flex flex-col justify-between" style="min-height: 350px;">
+                <div id="problem-container" class="text-7xl md:text-8xl font-bold text-white h-28 flex items-center justify-center">
+                    <span id="num1"></span>
+                    <span class="mx-4">×</span>
+                    <span id="num2"></span>
+                    <span class="mx-4">=</span>
+                    <span id="question-mark">?</span>
+                </div>
+
+                <div>
+                    <div class="max-w-md mx-auto">
+                        <input type="number" id="answer-input" class="w-full text-center text-2xl p-3 border-2 bg-gray-800 border-gray-700 text-white placeholder-gray-500 rounded-xl custom-focus-ring transition duration-200 mb-4" placeholder="Antwoord">
+                        <div class="flex flex-col sm:flex-row gap-2 justify-center">
+                            <button id="know-it-btn" class="w-full sm:w-1/2 bg-[#FF9CE9] hover:brightness-90 text-black font-bold py-3 px-6 rounded-xl transition duration-200 custom-focus-ring text-lg">Ik weet het!</button>
+                            <button id="calculated-btn" class="w-full sm:w-1/2 bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-xl transition duration-200 custom-focus-ring text-lg">Uitgerekend</button>
+                        </div>
+                    </div>
+                    
+                    <div id="feedback-message" class="mt-4 h-8 text-2xl font-semibold transition-opacity duration-300"></div>
+                </div>
+            </div>
+            
+            <!-- Session End Section -->
+            <div id="session-end-section" class="hidden text-center py-8">
+                 <h2 class="text-3xl font-bold text-[#FF9CE9] mb-2">Sessie Voltooid!</h2>
+                 <p class="text-gray-400 mb-6">Goed gedaan! Je hebt 20 sommen geoefend.</p>
+                 <button id="new-session-btn" class="bg-[#FF9CE9] hover:brightness-90 text-black font-bold py-3 px-8 rounded-xl transition duration-200 custom-focus-ring text-xl">Start Nieuwe Sessie</button>
+            </div>
+
+            <!-- Hardest Problems Section Toggle -->
+            <div class="text-center mt-12 border-t-2 border-gray-800 pt-8">
+                <button id="toggle-stats-btn" class="text-[#FF9CE9] hover:text-pink-300 font-semibold py-2 px-4">Toon moeilijkste sommen</button>
+            </div>
+            
+            <div id="stats-section" class="hidden mt-6">
+                 <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-gray-100">Moeilijkste Sommen</h2>
+                    <button id="reset-btn" class="bg-[#FF8DA1] hover:brightness-90 text-black font-semibold py-2 px-4 rounded-xl text-sm transition duration-200 custom-focus-ring">Scores Wissen</button>
+                </div>
+                <div id="hardest-problems-list" class="space-y-3">
+                    <p class="text-gray-400">Je hebt nog geen fouten gemaakt. Blijf oefenen!</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // DOM Elements
+        const num1El = document.getElementById('num1');
+        const num2El = document.getElementById('num2');
+        const answerInput = document.getElementById('answer-input');
+        const knowItBtn = document.getElementById('know-it-btn');
+        const calculatedBtn = document.getElementById('calculated-btn');
+        const feedbackMessage = document.getElementById('feedback-message');
+        
+        const hardestProblemsList = document.getElementById('hardest-problems-list');
+        const resetBtn = document.getElementById('reset-btn');
+        const toggleStatsBtn = document.getElementById('toggle-stats-btn');
+        const statsSection = document.getElementById('stats-section');
+        
+        const sessionProgressEl = document.getElementById('session-progress');
+        const correctProgressEl = document.getElementById('correct-progress');
+        const incorrectProgressEl = document.getElementById('incorrect-progress');
+        
+        const practiceSection = document.getElementById('practice-section');
+        const sessionEndSection = document.getElementById('session-end-section');
+        const newSessionBtn = document.getElementById('new-session-btn');
+
+        // State
+        let problems = [];
+        let currentProblem = null;
+        const MIN_NUM = 2; // No more table of 1
+        const MAX_NUM = 9; // No more table of 10
+        const SESSION_LENGTH = 20;
+
+        let sessionCount = 0;
+        let correctInSession = 0;
+        let incorrectInSession = 0;
+        let isWaitingForNext = false; // Flag to prevent multiple answer submissions
+
+        // --- Core Logic ---
+
+        function initializeProblems() {
+            // 1. Always start by defining the canonical, correct set of problems.
+            const newProblemSet = [];
+            for (let i = MIN_NUM; i <= MAX_NUM; i++) {
+                for (let j = MIN_NUM; j <= MAX_NUM; j++) {
+                    newProblemSet.push({ num1: i, num2: j, answer: i * j, mistakes: 0, calculated: 0 });
+                }
+            }
+
+            // 2. Try to load old data.
+            const savedProblemsJSON = localStorage.getItem('multiplicationProblems');
+            if (savedProblemsJSON) {
+                try {
+                    const savedProblems = JSON.parse(savedProblemsJSON);
+                    // Create a map for quick lookups of old scores.
+                    const scoreMap = new Map();
+                    savedProblems.forEach(p => {
+                        const key = `${p.num1}x${p.num2}`;
+                        scoreMap.set(key, { mistakes: p.mistakes || 0, calculated: p.calculated || 0 });
+                    });
+
+                    // 3. Merge scores into the new, correct set.
+                    newProblemSet.forEach(p => {
+                        const key = `${p.num1}x${p.num2}`;
+                        if (scoreMap.has(key)) {
+                            const scores = scoreMap.get(key);
+                            p.mistakes = scores.mistakes;
+                            p.calculated = scores.calculated;
+                        }
+                    });
+                    console.log('Voortgang geladen en samengevoegd met de juiste sommen.');
+                } catch (e) {
+                    console.error("Kon oude voortgang niet lezen, begin opnieuw.", e);
+                }
+            } else {
+                console.log('Nieuwe set sommen aangemaakt.');
+            }
+
+            // 4. The official 'problems' array is now the clean, potentially merged set.
+            problems = newProblemSet;
+
+            // 5. Save the clean set back to ensure localStorage is now correct.
+            saveProgress();
+        }
+
+        function saveProgress() {
+            localStorage.setItem('multiplicationProblems', JSON.stringify(problems));
+        }
+
+        function generateProblem() {
+            if (sessionCount >= SESSION_LENGTH) {
+                endSession();
+                return;
+            }
+            sessionCount++;
+
+            const weightedPool = [];
+            problems.forEach(p => {
+                const weight = 1 + (p.mistakes * 3) + p.calculated; 
+                for (let i = 0; i < weight; i++) {
+                    weightedPool.push(p);
+                }
+            });
+
+            const randomIndex = Math.floor(Math.random() * weightedPool.length);
+            currentProblem = weightedPool[randomIndex];
+            
+            displayProblem();
+        }
+
+        function displayProblem() {
+            updateSessionDisplay();
+            num1El.textContent = currentProblem.num1;
+            num2El.textContent = currentProblem.num2;
+            answerInput.value = '';
+            
+            answerInput.disabled = false;
+            knowItBtn.classList.remove('hidden');
+            calculatedBtn.classList.remove('hidden');
+            isWaitingForNext = false; 
+            answerInput.focus();
+        }
+        
+        function handleAnswer(isCalculated) {
+            if (isWaitingForNext) return; 
+
+            const userAnswer = parseInt(answerInput.value, 10);
+            if (isNaN(userAnswer)) return;
+            
+            isWaitingForNext = true; 
+            answerInput.disabled = true;
+            knowItBtn.classList.add('hidden');
+            calculatedBtn.classList.add('hidden');
+            
+            feedbackMessage.className = 'mt-4 h-8 text-2xl font-semibold transition-opacity duration-300';
+            
+            const problemToUpdate = problems.find(p => p.num1 === currentProblem.num1 && p.num2 === currentProblem.num2);
+
+            if (userAnswer === currentProblem.answer) {
+                correctInSession++;
+                feedbackMessage.textContent = 'Goed zo! 🎉';
+                feedbackMessage.classList.add('text-[#AD56C4]');
+                if (isCalculated && problemToUpdate) {
+                    problemToUpdate.calculated++;
+                }
+            } else {
+                incorrectInSession++;
+                feedbackMessage.textContent = `Niet helemaal! Het antwoord is ${currentProblem.answer}.`;
+                feedbackMessage.classList.add('text-[#FF8DA1]');
+                if (problemToUpdate) {
+                    problemToUpdate.mistakes++;
+                }
+            }
+            
+            saveProgress();
+            updateHardestProblemsList();
+            updateSessionDisplay();
+            
+            setTimeout(generateProblem, 500);
+        }
+
+        function updateHardestProblemsList() {
+            const mistakes = problems
+                .filter(p => p.mistakes > 0 || p.calculated > 0)
+                .sort((a, b) => (b.mistakes * 3 + b.calculated) - (a.mistakes * 3 + a.calculated))
+                .slice(0, 10);
+
+            hardestProblemsList.innerHTML = '';
+
+            if (mistakes.length === 0) {
+                 hardestProblemsList.innerHTML = '<p class="text-gray-400">Je hebt nog geen fouten gemaakt. Blijf oefenen!</p>';
+                 return;
+            }
+
+            mistakes.forEach(p => {
+                const li = document.createElement('div');
+                li.className = 'flex justify-between items-center bg-gray-800 p-3 rounded-lg';
+                let scoreHtml = '';
+                if(p.mistakes > 0){
+                    scoreHtml += `<span class="text-[#FF8DA1] font-bold bg-[#FF8DA1]/20 px-3 py-1 rounded-full text-sm">${p.mistakes} fout${p.mistakes > 1 ? 'en' : ''}</span>`;
+                }
+                if(p.calculated > 0){
+                     scoreHtml += `<span class="text-[#FFC2BA] font-bold bg-[#FFC2BA]/20 px-3 py-1 rounded-full text-sm ml-2">${p.calculated} uitgerekend</span>`;
+                }
+
+                li.innerHTML = `
+                    <span class="font-semibold text-lg">${p.num1} × ${p.num2}</span>
+                    <div class="flex gap-2">${scoreHtml}</div>
+                `;
+                hardestProblemsList.appendChild(li);
+            });
+        }
+        
+        function updateSessionDisplay() {
+            sessionProgressEl.textContent = `Som ${sessionCount} van ${SESSION_LENGTH}`;
+            
+            const correctPercentage = (correctInSession / SESSION_LENGTH) * 100;
+            const incorrectPercentage = (incorrectInSession / SESSION_LENGTH) * 100;
+
+            correctProgressEl.style.width = `${correctPercentage}%`;
+            incorrectProgressEl.style.width = `${incorrectPercentage}%`;
+        }
+
+        function endSession() {
+            practiceSection.classList.add('hidden');
+            sessionEndSection.classList.remove('hidden');
+        }
+
+        function startNewSession() {
+            sessionCount = 0;
+            correctInSession = 0;
+            incorrectInSession = 0;
+            sessionEndSection.classList.add('hidden');
+            practiceSection.classList.remove('hidden');
+            feedbackMessage.textContent = ''; 
+            updateSessionDisplay();
+            generateProblem();
+        }
+
+        function resetScores() {
+            if (confirm('Weet je zeker dat je al je scores wilt wissen? Je voortgang gaat verloren.')) {
+                localStorage.removeItem('multiplicationProblems');
+                initializeProblems();
+                updateHardestProblemsList();
+                startNewSession();
+                console.log('Scores zijn gereset.');
+            }
+        }
+
+        // --- Event Listeners ---
+        knowItBtn.addEventListener('click', () => handleAnswer(false));
+        calculatedBtn.addEventListener('click', () => handleAnswer(true));
+        newSessionBtn.addEventListener('click', startNewSession);
+
+        answerInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !knowItBtn.classList.contains('hidden')) {
+                handleAnswer(false); 
+            }
+        });
+        
+        window.addEventListener('keydown', (e) => {
+            if (e.key >= '0' && e.key <= '9' && !practiceSection.classList.contains('hidden')) {
+                if (document.activeElement !== answerInput) {
+                    answerInput.focus();
+                }
+            }
+        });
+
+        resetBtn.addEventListener('click', resetScores);
+
+        toggleStatsBtn.addEventListener('click', () => {
+            statsSection.classList.toggle('hidden');
+            if (statsSection.classList.contains('hidden')) {
+                toggleStatsBtn.textContent = 'Toon moeilijkste sommen';
+            } else {
+                toggleStatsBtn.textContent = 'Verberg moeilijkste sommen';
+            }
+        });
+
+        // --- Initial Load ---
+        function startApp() {
+            initializeProblems();
+            updateHardestProblemsList();
+            startNewSession();
+        }
+
+        startApp();
+    </script>
+</body>
+</html>
+
