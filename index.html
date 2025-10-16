@@ -34,6 +34,10 @@
         input[type=number] {
           -moz-appearance: textfield;
         }
+        .keypad-btn {
+            @apply bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-full text-5xl transition-transform duration-100 active:scale-95 flex items-center justify-center;
+            aspect-ratio: 1 / 1; /* This ensures the button is a perfect circle */
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-200 flex items-center justify-center min-h-screen p-4">
@@ -56,7 +60,7 @@
             </div>
 
             <!-- Practice Section -->
-            <div id="practice-section" class="text-center flex flex-col justify-between" style="min-height: 350px;">
+            <div id="practice-section" class="text-center flex flex-col justify-between" style="min-height: 480px;">
                 <div id="problem-container" class="text-7xl md:text-8xl font-bold text-white h-28 flex items-center justify-center">
                     <span id="num1"></span>
                     <span class="mx-4">×</span>
@@ -67,8 +71,29 @@
 
                 <div>
                     <div class="max-w-md mx-auto">
-                        <input type="number" id="answer-input" class="w-full text-center text-2xl p-3 border-2 bg-gray-800 border-gray-700 text-white placeholder-gray-500 rounded-xl custom-focus-ring transition duration-200 mb-4" placeholder="Antwoord">
-                        <div class="flex flex-col sm:flex-row gap-2 justify-center">
+                        <!-- Desktop Input -->
+                        <input type="number" id="answer-input" class="w-full text-center text-2xl p-3 border-2 bg-gray-800 border-gray-700 text-white placeholder-gray-500 rounded-xl custom-focus-ring transition duration-200 mb-4 hidden md:block" placeholder="Antwoord">
+                        
+                        <!-- Mobile Answer Display & Keypad -->
+                        <div id="mobile-keypad-container" class="w-full md:hidden">
+                            <div id="mobile-answer-display" class="w-full text-center text-3xl p-3 bg-gray-800 text-white rounded-xl mb-4 min-h-[56px] flex items-center justify-center"></div>
+                            <div id="keypad" class="grid grid-cols-3 gap-4 mt-4">
+                                <button class="keypad-btn" data-key="1">1</button>
+                                <button class="keypad-btn" data-key="2">2</button>
+                                <button class="keypad-btn" data-key="3">3</button>
+                                <button class="keypad-btn" data-key="4">4</button>
+                                <button class="keypad-btn" data-key="5">5</button>
+                                <button class="keypad-btn" data-key="6">6</button>
+                                <button class="keypad-btn" data-key="7">7</button>
+                                <button class="keypad-btn" data-key="8">8</button>
+                                <button class="keypad-btn" data-key="9">9</button>
+                                <button class="keypad-btn text-3xl" id="backspace-btn">⌫</button>
+                                <button class="keypad-btn" data-key="0">0</button>
+                                <div class="opacity-0"></div> <!-- Placeholder for layout -->
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-2 justify-center mt-4">
                             <button id="know-it-btn" class="w-full sm:w-1/2 bg-[#FF9CE9] hover:brightness-90 text-black font-bold py-3 px-6 rounded-xl transition duration-200 custom-focus-ring text-lg">Ik weet het!</button>
                             <button id="calculated-btn" class="w-full sm:w-1/2 bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-xl transition duration-200 custom-focus-ring text-lg">Uitgerekend</button>
                         </div>
@@ -110,56 +135,51 @@
         const knowItBtn = document.getElementById('know-it-btn');
         const calculatedBtn = document.getElementById('calculated-btn');
         const feedbackMessage = document.getElementById('feedback-message');
-        
         const hardestProblemsList = document.getElementById('hardest-problems-list');
         const resetBtn = document.getElementById('reset-btn');
         const toggleStatsBtn = document.getElementById('toggle-stats-btn');
         const statsSection = document.getElementById('stats-section');
-        
         const sessionProgressEl = document.getElementById('session-progress');
         const correctProgressEl = document.getElementById('correct-progress');
         const incorrectProgressEl = document.getElementById('incorrect-progress');
-        
         const practiceSection = document.getElementById('practice-section');
         const sessionEndSection = document.getElementById('session-end-section');
         const newSessionBtn = document.getElementById('new-session-btn');
+        // Mobile Keypad Elements
+        const mobileAnswerDisplay = document.getElementById('mobile-answer-display');
+        const keypad = document.getElementById('keypad');
+        const backspaceBtn = document.getElementById('backspace-btn');
 
         // State
         let problems = [];
         let currentProblem = null;
-        const MIN_NUM = 2; // No more table of 1
-        const MAX_NUM = 9; // No more table of 10
+        let mobileAnswer = '';
+        const MIN_NUM = 2;
+        const MAX_NUM = 9;
         const SESSION_LENGTH = 20;
-
         let sessionCount = 0;
         let correctInSession = 0;
         let incorrectInSession = 0;
-        let isWaitingForNext = false; // Flag to prevent multiple answer submissions
+        let isWaitingForNext = false;
 
         // --- Core Logic ---
 
         function initializeProblems() {
-            // 1. Always start by defining the canonical, correct set of problems.
             const newProblemSet = [];
             for (let i = MIN_NUM; i <= MAX_NUM; i++) {
                 for (let j = MIN_NUM; j <= MAX_NUM; j++) {
                     newProblemSet.push({ num1: i, num2: j, answer: i * j, mistakes: 0, calculated: 0 });
                 }
             }
-
-            // 2. Try to load old data.
             const savedProblemsJSON = localStorage.getItem('multiplicationProblems');
             if (savedProblemsJSON) {
                 try {
                     const savedProblems = JSON.parse(savedProblemsJSON);
-                    // Create a map for quick lookups of old scores.
                     const scoreMap = new Map();
                     savedProblems.forEach(p => {
                         const key = `${p.num1}x${p.num2}`;
                         scoreMap.set(key, { mistakes: p.mistakes || 0, calculated: p.calculated || 0 });
                     });
-
-                    // 3. Merge scores into the new, correct set.
                     newProblemSet.forEach(p => {
                         const key = `${p.num1}x${p.num2}`;
                         if (scoreMap.has(key)) {
@@ -168,18 +188,11 @@
                             p.calculated = scores.calculated;
                         }
                     });
-                    console.log('Voortgang geladen en samengevoegd met de juiste sommen.');
                 } catch (e) {
-                    console.error("Kon oude voortgang niet lezen, begin opnieuw.", e);
+                    console.error("Kon oude voortgang niet lezen.", e);
                 }
-            } else {
-                console.log('Nieuwe set sommen aangemaakt.');
             }
-
-            // 4. The official 'problems' array is now the clean, potentially merged set.
             problems = newProblemSet;
-
-            // 5. Save the clean set back to ensure localStorage is now correct.
             saveProgress();
         }
 
@@ -193,18 +206,15 @@
                 return;
             }
             sessionCount++;
-
             const weightedPool = [];
             problems.forEach(p => {
-                const weight = 1 + (p.mistakes * 3) + p.calculated; 
+                const weight = 1 + (p.mistakes * 3) + p.calculated;
                 for (let i = 0; i < weight; i++) {
                     weightedPool.push(p);
                 }
             });
-
             const randomIndex = Math.floor(Math.random() * weightedPool.length);
             currentProblem = weightedPool[randomIndex];
-            
             displayProblem();
         }
 
@@ -213,27 +223,29 @@
             num1El.textContent = currentProblem.num1;
             num2El.textContent = currentProblem.num2;
             answerInput.value = '';
-            
+            mobileAnswer = '';
+            mobileAnswerDisplay.textContent = '';
             answerInput.disabled = false;
             knowItBtn.classList.remove('hidden');
             calculatedBtn.classList.remove('hidden');
-            isWaitingForNext = false; 
-            answerInput.focus();
+            isWaitingForNext = false;
+            if (window.innerWidth >= 768) {
+                answerInput.focus();
+            }
         }
-        
-        function handleAnswer(isCalculated) {
-            if (isWaitingForNext) return; 
 
-            const userAnswer = parseInt(answerInput.value, 10);
-            if (isNaN(userAnswer)) return;
+        function handleAnswer(isCalculated) {
+            if (isWaitingForNext) return;
+            const isMobile = window.innerWidth < 768;
+            const userAnswerString = isMobile ? mobileAnswer : answerInput.value;
+            if (userAnswerString === '') return;
             
-            isWaitingForNext = true; 
+            const userAnswer = parseInt(userAnswerString, 10);
+            isWaitingForNext = true;
             answerInput.disabled = true;
             knowItBtn.classList.add('hidden');
             calculatedBtn.classList.add('hidden');
-            
             feedbackMessage.className = 'mt-4 h-8 text-2xl font-semibold transition-opacity duration-300';
-            
             const problemToUpdate = problems.find(p => p.num1 === currentProblem.num1 && p.num2 === currentProblem.num2);
 
             if (userAnswer === currentProblem.answer) {
@@ -251,52 +263,38 @@
                     problemToUpdate.mistakes++;
                 }
             }
-            
             saveProgress();
             updateHardestProblemsList();
             updateSessionDisplay();
-            
             setTimeout(generateProblem, 500);
         }
 
         function updateHardestProblemsList() {
-            const mistakes = problems
-                .filter(p => p.mistakes > 0 || p.calculated > 0)
-                .sort((a, b) => (b.mistakes * 3 + b.calculated) - (a.mistakes * 3 + a.calculated))
-                .slice(0, 10);
-
+            const mistakes = problems.filter(p => p.mistakes > 0 || p.calculated > 0).sort((a, b) => (b.mistakes * 3 + b.calculated) - (a.mistakes * 3 + a.calculated)).slice(0, 10);
             hardestProblemsList.innerHTML = '';
-
             if (mistakes.length === 0) {
-                 hardestProblemsList.innerHTML = '<p class="text-gray-400">Je hebt nog geen fouten gemaakt. Blijf oefenen!</p>';
-                 return;
+                hardestProblemsList.innerHTML = '<p class="text-gray-400">Je hebt nog geen fouten gemaakt. Blijf oefenen!</p>';
+                return;
             }
-
             mistakes.forEach(p => {
                 const li = document.createElement('div');
                 li.className = 'flex justify-between items-center bg-gray-800 p-3 rounded-lg';
                 let scoreHtml = '';
-                if(p.mistakes > 0){
+                if (p.mistakes > 0) {
                     scoreHtml += `<span class="text-[#FF8DA1] font-bold bg-[#FF8DA1]/20 px-3 py-1 rounded-full text-sm">${p.mistakes} fout${p.mistakes > 1 ? 'en' : ''}</span>`;
                 }
-                if(p.calculated > 0){
-                     scoreHtml += `<span class="text-[#FFC2BA] font-bold bg-[#FFC2BA]/20 px-3 py-1 rounded-full text-sm ml-2">${p.calculated} uitgerekend</span>`;
+                if (p.calculated > 0) {
+                    scoreHtml += `<span class="text-[#FFC2BA] font-bold bg-[#FFC2BA]/20 px-3 py-1 rounded-full text-sm ml-2">${p.calculated} uitgerekend</span>`;
                 }
-
-                li.innerHTML = `
-                    <span class="font-semibold text-lg">${p.num1} × ${p.num2}</span>
-                    <div class="flex gap-2">${scoreHtml}</div>
-                `;
+                li.innerHTML = `<span class="font-semibold text-lg">${p.num1} × ${p.num2}</span><div class="flex gap-2">${scoreHtml}</div>`;
                 hardestProblemsList.appendChild(li);
             });
         }
-        
+
         function updateSessionDisplay() {
             sessionProgressEl.textContent = `Som ${sessionCount} van ${SESSION_LENGTH}`;
-            
             const correctPercentage = (correctInSession / SESSION_LENGTH) * 100;
             const incorrectPercentage = (incorrectInSession / SESSION_LENGTH) * 100;
-
             correctProgressEl.style.width = `${correctPercentage}%`;
             incorrectProgressEl.style.width = `${incorrectPercentage}%`;
         }
@@ -312,7 +310,7 @@
             incorrectInSession = 0;
             sessionEndSection.classList.add('hidden');
             practiceSection.classList.remove('hidden');
-            feedbackMessage.textContent = ''; 
+            feedbackMessage.textContent = '';
             updateSessionDisplay();
             generateProblem();
         }
@@ -323,7 +321,6 @@
                 initializeProblems();
                 updateHardestProblemsList();
                 startNewSession();
-                console.log('Scores zijn gereset.');
             }
         }
 
@@ -332,13 +329,13 @@
         calculatedBtn.addEventListener('click', () => handleAnswer(true));
         newSessionBtn.addEventListener('click', startNewSession);
 
-        answerInput.addEventListener('keydown', (e) => {
+        answerInput.addEventListener('keydown', e => {
             if (e.key === 'Enter' && !knowItBtn.classList.contains('hidden')) {
-                handleAnswer(false); 
+                handleAnswer(false);
             }
         });
-        
-        window.addEventListener('keydown', (e) => {
+
+        window.addEventListener('keydown', e => {
             if (e.key >= '0' && e.key <= '9' && !practiceSection.classList.contains('hidden')) {
                 if (document.activeElement !== answerInput) {
                     answerInput.focus();
@@ -346,15 +343,24 @@
             }
         });
 
+        // Keypad logic
+        keypad.addEventListener('click', (e) => {
+            if (e.target.dataset.key) {
+                mobileAnswer += e.target.dataset.key;
+                mobileAnswerDisplay.textContent = mobileAnswer;
+            }
+        });
+
+        backspaceBtn.addEventListener('click', () => {
+            mobileAnswer = mobileAnswer.slice(0, -1);
+            mobileAnswerDisplay.textContent = mobileAnswer;
+        });
+
         resetBtn.addEventListener('click', resetScores);
 
         toggleStatsBtn.addEventListener('click', () => {
             statsSection.classList.toggle('hidden');
-            if (statsSection.classList.contains('hidden')) {
-                toggleStatsBtn.textContent = 'Toon moeilijkste sommen';
-            } else {
-                toggleStatsBtn.textContent = 'Verberg moeilijkste sommen';
-            }
+            toggleStatsBtn.textContent = statsSection.classList.contains('hidden') ? 'Toon moeilijkste sommen' : 'Verberg moeilijkste sommen';
         });
 
         // --- Initial Load ---
