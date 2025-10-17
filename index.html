@@ -6,7 +6,7 @@
     <title>Tafel Kampioen</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light+Two&display=swap" rel="stylesheet">
     <style>
@@ -69,7 +69,7 @@
             /* Keypad compacter maar nog steeds zichtbaar */
             .keypad-btn {
                 font-size: 1.5rem !important;
-                min-height: 2.75rem !important;
+                min-height: 2.75rem !importnat;
                 width: 2.75rem !important;
             }
             
@@ -138,8 +138,8 @@
                 <div id="session-progress" class="font-semibold text-gray-300 text-center mb-2">Som 1 van 20</div>
                 <div id="progress-bar-container" class="w-full bg-gray-700 rounded-full h-5">
                     <div class="flex h-5 rounded-full overflow-hidden">
-                        <div id="correct-progress" class="bg-[#AD56C4] transition-all duration-300 ease-out" style="width: 0%"></div>
-                        <div id="incorrect-progress" class="bg-[#FF8DA1] transition-all duration-300 ease-out" style="width: 0%"></div>
+                        <div id="correct-progress" class="bg-[#70e0a4] transition-all duration-300 ease-out" style="width: 0%"></div>
+                        <div id="incorrect-progress" class="bg-[#ff758f] transition-all duration-300 ease-out" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
@@ -172,9 +172,9 @@
                                 <button class="keypad-btn" data-key="7">7</button>
                                 <button class="keypad-btn" data-key="8">8</button>
                                 <button class="keypad-btn" data-key="9">9</button>
-                                <button class="keypad-btn text-3xl" id="backspace-btn">⌫</button>
-                                <button class="keypad-btn" data-key="0">0</button>
                                 <div class="opacity-0"></div> <!-- Placeholder for layout -->
+                                <button class="keypad-btn" data-key="0">0</button>
+                                <button class="keypad-btn" id="backspace-btn">⌫</button>
                             </div>
                         </div>
 
@@ -203,7 +203,7 @@
             <div id="stats-section" class="hidden mt-6 flex-shrink-0">
                  <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-100">Moeilijkste Sommen</h2>
-                    <button id="reset-btn" class="bg-[#FF8DA1] hover:brightness-90 text-black font-semibold py-2 px-4 rounded-xl text-sm transition duration-200 custom-focus-ring">Scores Wissen</button>
+                    <button id="reset-btn" class="bg-[#ff758f] hover:brightness-90 text-black font-semibold py-2 px-4 rounded-xl text-sm transition duration-200 custom-focus-ring">Scores Wissen</button>
                 </div>
                 <div id="hardest-problems-list" class="space-y-3">
                     <p class="text-gray-400">Je hebt nog geen fouten gemaakt. Blijf oefenen!</p>
@@ -336,14 +336,14 @@
             if (userAnswer === currentProblem.answer) {
                 correctInSession++;
                 feedbackMessage.textContent = 'Goed zo! 🎉';
-                feedbackMessage.classList.add('text-[#AD56C4]');
+                feedbackMessage.classList.add('text-[#70e0a4]');
                 if (isCalculated && problemToUpdate) {
                     problemToUpdate.calculated++;
                 }
             } else {
                 incorrectInSession++;
                 feedbackMessage.textContent = `Niet helemaal! Het antwoord is ${currentProblem.answer}.`;
-                feedbackMessage.classList.add('text-[#FF8DA1]');
+                feedbackMessage.classList.add('text-[#ff758f]');
                 if (problemToUpdate) {
                     problemToUpdate.mistakes++;
                 }
@@ -366,7 +366,7 @@
                 li.className = 'flex justify-between items-center bg-gray-800 p-3 rounded-lg';
                 let scoreHtml = '';
                 if (p.mistakes > 0) {
-                    scoreHtml += `<span class="text-[#FF8DA1] font-bold bg-[#FF8DA1]/20 px-3 py-1 rounded-full text-sm">${p.mistakes} fout${p.mistakes > 1 ? 'en' : ''}</span>`;
+                    scoreHtml += `<span class="text-[#ff758f] font-bold bg-[#ff758f]/20 px-3 py-1 rounded-full text-sm">${p.mistakes} fout${p.mistakes > 1 ? 'en' : ''}</span>`;
                 }
                 if (p.calculated > 0) {
                     scoreHtml += `<span class="text-[#FFC2BA] font-bold bg-[#FFC2BA]/20 px-3 py-1 rounded-full text-sm ml-2">${p.calculated} uitgerekend</span>`;
@@ -460,3 +460,4 @@
     </script>
 </body>
 </html>
+
