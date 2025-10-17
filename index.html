@@ -13,15 +13,13 @@
         body {
             font-family: 'Outfit', sans-serif;
             touch-action: manipulation;
-            min-height: 100vh;
-            min-height: 100dvh; /* Dynamic viewport height voor betere mobiele ondersteuning */
         }
         h1 {
             font-family: 'Shadows Into Light Two', cursive;
         }
         .custom-focus-ring:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.6); /* Adjusted for dark theme */
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.6);
         }
         .hidden {
             display: none;
@@ -37,67 +35,101 @@
         }
         .keypad-btn {
             @apply bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-full text-4xl transition-transform duration-100 active:scale-95 flex items-center justify-center;
-            aspect-ratio: 1 / 1; /* Ensures the button is a perfect circle */
+            aspect-ratio: 1 / 1;
         }
 
         /* Mobile optimalisaties */
         @media (max-width: 767px) {
-            .mobile-header h1 {
-                font-size: 3rem !important; /* Kleiner dan text-7xl */
-            }
-            .mobile-problem {
-                font-size: 3rem !important; /* Kleiner dan text-7xl */
-            }
-            
-            /* Compactere layout */
-            .w-full.max-w-md.mx-auto.flex.flex-col.h-full {
+            /* Compactere overall layout */
+            body {
                 min-height: 100vh;
-                justify-content: space-between;
+                min-height: 100dvh;
             }
             
-            /* Kleinere margin/padding */
-            #session-stats {
-                margin-bottom: 1rem !important;
+            .mobile-header h1 {
+                font-size: 2.5rem !important;
+                line-height: 1.1;
             }
             
-            #mobile-keypad-container {
-                margin-top: 1rem !important;
+            .mobile-problem {
+                font-size: 2.5rem !important;
+                line-height: 1.2;
             }
             
-            /* Flexbox optimalisaties */
-            #practice-section {
-                gap: 1rem;
-            }
-            
-            /* Keypad optimalisaties */
+            /* Veel compactere keypad */
             .keypad-btn {
-                font-size: 2.5rem !important; /* Kleiner dan text-4xl */
-                min-height: 3.5rem;
+                font-size: 1.5rem !important; /* Veel kleiner */
+                min-height: 2.5rem !important; /* Veel kleiner */
+                height: 2.5rem !important;
+                width: 2.5rem !important;
             }
             
             #keypad {
-                gap: 0.5rem !important; /* gap-2 in plaats van gap-3 */
+                gap: 0.25rem !important; /* Heel kleine gaps */
+                max-width: 200px; /* Beperk de breedte */
+                margin: 0 auto;
             }
             
-            .mobile-compact {
-                gap: 0.75rem; /* Kleinere gaps tussen elementen */
+            /* Compactere margins overal */
+            #session-stats {
+                margin-bottom: 0.5rem !important;
+            }
+            
+            #mobile-keypad-container {
+                margin-top: 0.5rem !important;
+            }
+            
+            #mobile-answer-display {
+                margin-bottom: 0.5rem !important;
+                padding: 0.5rem !important;
+                min-height: 40px !important;
+                font-size: 1.5rem !important;
+            }
+            
+            /* Compactere buttons */
+            .mobile-action-buttons button {
+                padding: 0.5rem 1rem !important;
+                font-size: 0.875rem !important;
+            }
+            
+            /* Kleinere feedback message */
+            #feedback-message {
+                font-size: 1.25rem !important;
+                margin-top: 0.5rem !important;
+                height: 1.5rem !important;
+            }
+            
+            /* Compactere header */
+            .mobile-header p {
+                font-size: 0.875rem !important;
+                margin-top: 0.25rem !important;
+            }
+            
+            /* Kleinere progress bar */
+            #progress-bar-container {
+                height: 0.75rem !important;
+            }
+            
+            #session-progress {
+                font-size: 0.875rem !important;
+                margin-bottom: 0.25rem !important;
             }
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-200 flex flex-col items-center justify-center min-h-screen p-4">
+<body class="bg-gray-900 text-gray-200 flex flex-col items-center justify-center min-h-screen p-2 md:p-4">
     <div class="w-full max-w-md mx-auto flex flex-col h-full">
-        <header class="text-center mb-4 md:mb-6 flex-shrink-0">
+        <header class="text-center mb-2 md:mb-6 flex-shrink-0">
             <h1 class="text-5xl md:text-7xl font-extrabold text-[#FF9CE9] mobile-header">Tafel Meester</h1>
-            <p class="text-lg md:text-xl text-gray-400 mt-2 md:mt-3">Oefen als een leerling, reken als een meester</p>
+            <p class="text-sm md:text-xl text-gray-400 mt-1 md:mt-3">Oefen als een leerling, reken als een meester</p>
         </header>
 
-        <main class="bg-black rounded-xl shadow-lg p-4 md:p-12 flex-grow flex flex-col">
+        <main class="bg-black rounded-xl shadow-lg p-3 md:p-12 flex-grow flex flex-col">
             <!-- Session Stats -->
-            <div id="session-stats" class="max-w-md mx-auto mb-4 md:mb-6 text-lg w-full">
-                <div id="session-progress" class="font-semibold text-gray-300 text-center mb-2">Som 1 van 20</div>
-                <div id="progress-bar-container" class="w-full bg-gray-700 rounded-full h-5">
-                    <div class="flex h-5 rounded-full overflow-hidden">
+            <div id="session-stats" class="max-w-md mx-auto mb-2 md:mb-6 text-lg w-full">
+                <div id="session-progress" class="font-semibold text-gray-300 text-center mb-1 md:mb-2 text-sm md:text-base">Som 1 van 20</div>
+                <div id="progress-bar-container" class="w-full bg-gray-700 rounded-full h-3 md:h-5">
+                    <div class="flex h-3 md:h-5 rounded-full overflow-hidden">
                         <div id="correct-progress" class="bg-[#AD56C4] transition-all duration-300 ease-out" style="width: 0%"></div>
                         <div id="incorrect-progress" class="bg-[#FF8DA1] transition-all duration-300 ease-out" style="width: 0%"></div>
                     </div>
@@ -105,318 +137,16 @@
             </div>
 
             <!-- Practice Section -->
-            <div id="practice-section" class="text-center flex-grow flex flex-col justify-between mobile-compact">
-                <div id="problem-container" class="text-5xl md:text-8xl font-bold text-white flex items-center justify-center flex-shrink-0 h-20 md:h-28 mobile-problem">
+            <div id="practice-section" class="text-center flex-grow flex flex-col justify-between">
+                <div id="problem-container" class="text-5xl md:text-8xl font-bold text-white flex items-center justify-center flex-shrink-0 h-16 md:h-28 mobile-problem">
                     <span id="num1"></span>
-                    <span class="mx-2 md:mx-4">×</span>
+                    <span class="mx-1 md:mx-4">×</span>
                     <span id="num2"></span>
-                    <span class="mx-2 md:mx-4">=</span>
+                    <span class="mx-1 md:mx-4">=</span>
                     <span id="question-mark">?</span>
                 </div>
 
                 <div class="flex-grow flex flex-col justify-end">
                     <div class="max-w-md mx-auto w-full">
                         <!-- Desktop Input -->
-                        <input type="number" id="answer-input" class="w-full text-center text-2xl p-3 border-2 bg-gray-800 border-gray-700 text-white placeholder-gray-500 rounded-xl custom-focus-ring transition duration-200 mb-4 hidden md:block" placeholder="Antwoord">
-                        
-                        <!-- Mobile Answer Display & Keypad -->
-                        <div id="mobile-keypad-container" class="w-full md:hidden">
-                            <div id="mobile-answer-display" class="w-full text-center text-3xl p-3 bg-gray-800 text-white rounded-xl mb-4 min-h-[56px] flex items-center justify-center"></div>
-                            <div id="keypad" class="grid grid-cols-3 gap-2 md:gap-3 mt-4">
-                                <button class="keypad-btn" data-key="1">1</button>
-                                <button class="keypad-btn" data-key="2">2</button>
-                                <button class="keypad-btn" data-key="3">3</button>
-                                <button class="keypad-btn" data-key="4">4</button>
-                                <button class="keypad-btn" data-key="5">5</button>
-                                <button class="keypad-btn" data-key="6">6</button>
-                                <button class="keypad-btn" data-key="7">7</button>
-                                <button class="keypad-btn" data-key="8">8</button>
-                                <button class="keypad-btn" data-key="9">9</button>
-                                <button class="keypad-btn text-3xl" id="backspace-btn">⌫</button>
-                                <button class="keypad-btn" data-key="0">0</button>
-                                <div class="opacity-0"></div> <!-- Placeholder for layout -->
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col sm:flex-row gap-2 justify-center mt-4">
-                            <button id="know-it-btn" class="w-full sm:w-1/2 bg-[#FF9CE9] hover:brightness-90 text-black font-bold py-3 px-6 rounded-xl transition duration-200 custom-focus-ring text-lg">Ik weet het!</button>
-                            <button id="calculated-btn" class="w-full sm:w-1/2 bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-xl transition duration-200 custom-focus-ring text-lg">Uitgerekend</button>
-                        </div>
-                    </div>
-                    
-                    <div id="feedback-message" class="mt-4 h-8 text-2xl font-semibold transition-opacity duration-300 flex-shrink-0"></div>
-                </div>
-            </div>
-            
-            <!-- Session End Section -->
-            <div id="session-end-section" class="hidden text-center py-8">
-                 <h2 class="text-3xl font-bold text-[#FF9CE9] mb-2">Sessie Voltooid!</h2>
-                 <p class="text-gray-400 mb-6">Goed gedaan! Je hebt 20 sommen geoefend.</p>
-                 <button id="new-session-btn" class="bg-[#FF9CE9] hover:brightness-90 text-black font-bold py-3 px-8 rounded-xl transition duration-200 custom-focus-ring text-xl">Start Nieuwe Sessie</button>
-            </div>
-
-            <!-- Hardest Problems Section Toggle -->
-            <div class="text-center mt-8 border-t-2 border-gray-800 pt-6 flex-shrink-0">
-                <button id="toggle-stats-btn" class="text-[#FF9CE9] hover:text-pink-300 font-semibold py-2 px-4">Toon moeilijkste sommen</button>
-            </div>
-            
-            <div id="stats-section" class="hidden mt-6 flex-shrink-0">
-                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-2xl font-bold text-gray-100">Moeilijkste Sommen</h2>
-                    <button id="reset-btn" class="bg-[#FF8DA1] hover:brightness-90 text-black font-semibold py-2 px-4 rounded-xl text-sm transition duration-200 custom-focus-ring">Scores Wissen</button>
-                </div>
-                <div id="hardest-problems-list" class="space-y-3">
-                    <p class="text-gray-400">Je hebt nog geen fouten gemaakt. Blijf oefenen!</p>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <script>
-        // DOM Elements
-        const num1El = document.getElementById('num1');
-        const num2El = document.getElementById('num2');
-        const answerInput = document.getElementById('answer-input');
-        const knowItBtn = document.getElementById('know-it-btn');
-        const calculatedBtn = document.getElementById('calculated-btn');
-        const feedbackMessage = document.getElementById('feedback-message');
-        const hardestProblemsList = document.getElementById('hardest-problems-list');
-        const resetBtn = document.getElementById('reset-btn');
-        const toggleStatsBtn = document.getElementById('toggle-stats-btn');
-        const statsSection = document.getElementById('stats-section');
-        const sessionProgressEl = document.getElementById('session-progress');
-        const correctProgressEl = document.getElementById('correct-progress');
-        const incorrectProgressEl = document.getElementById('incorrect-progress');
-        const practiceSection = document.getElementById('practice-section');
-        const sessionEndSection = document.getElementById('session-end-section');
-        const newSessionBtn = document.getElementById('new-session-btn');
-        // Mobile Keypad Elements
-        const mobileAnswerDisplay = document.getElementById('mobile-answer-display');
-        const keypad = document.getElementById('keypad');
-        const backspaceBtn = document.getElementById('backspace-btn');
-
-        // State
-        let problems = [];
-        let currentProblem = null;
-        let mobileAnswer = '';
-        const MIN_NUM = 2;
-        const MAX_NUM = 9;
-        const SESSION_LENGTH = 20;
-        let sessionCount = 0;
-        let correctInSession = 0;
-        let incorrectInSession = 0;
-        let isWaitingForNext = false;
-
-        // --- Core Logic ---
-
-        function initializeProblems() {
-            const newProblemSet = [];
-            for (let i = MIN_NUM; i <= MAX_NUM; i++) {
-                for (let j = MIN_NUM; j <= MAX_NUM; j++) {
-                    newProblemSet.push({ num1: i, num2: j, answer: i * j, mistakes: 0, calculated: 0 });
-                }
-            }
-            const savedProblemsJSON = localStorage.getItem('multiplicationProblems');
-            if (savedProblemsJSON) {
-                try {
-                    const savedProblems = JSON.parse(savedProblemsJSON);
-                    const scoreMap = new Map();
-                    savedProblems.forEach(p => {
-                        const key = `${p.num1}x${p.num2}`;
-                        scoreMap.set(key, { mistakes: p.mistakes || 0, calculated: p.calculated || 0 });
-                    });
-                    newProblemSet.forEach(p => {
-                        const key = `${p.num1}x${p.num2}`;
-                        if (scoreMap.has(key)) {
-                            const scores = scoreMap.get(key);
-                            p.mistakes = scores.mistakes;
-                            p.calculated = scores.calculated;
-                        }
-                    });
-                } catch (e) {
-                    console.error("Kon oude voortgang niet lezen.", e);
-                }
-            }
-            problems = newProblemSet;
-            saveProgress();
-        }
-
-        function saveProgress() {
-            localStorage.setItem('multiplicationProblems', JSON.stringify(problems));
-        }
-
-        function generateProblem() {
-            if (sessionCount >= SESSION_LENGTH) {
-                endSession();
-                return;
-            }
-            sessionCount++;
-            const weightedPool = [];
-            problems.forEach(p => {
-                const weight = 1 + (p.mistakes * 3) + p.calculated;
-                for (let i = 0; i < weight; i++) {
-                    weightedPool.push(p);
-                }
-            });
-            const randomIndex = Math.floor(Math.random() * weightedPool.length);
-            currentProblem = weightedPool[randomIndex];
-            displayProblem();
-        }
-
-        function displayProblem() {
-            updateSessionDisplay();
-            num1El.textContent = currentProblem.num1;
-            num2El.textContent = currentProblem.num2;
-            answerInput.value = '';
-            mobileAnswer = '';
-            mobileAnswerDisplay.textContent = '';
-            answerInput.disabled = false;
-            knowItBtn.classList.remove('hidden');
-            calculatedBtn.classList.remove('hidden');
-            isWaitingForNext = false;
-            if (window.innerWidth >= 768) {
-                answerInput.focus();
-            }
-        }
-
-        function handleAnswer(isCalculated) {
-            if (isWaitingForNext) return;
-            const isMobile = window.innerWidth < 768;
-            const userAnswerString = isMobile ? mobileAnswer : answerInput.value;
-            if (userAnswerString === '') return;
-            
-            const userAnswer = parseInt(userAnswerString, 10);
-            isWaitingForNext = true;
-            answerInput.disabled = true;
-            knowItBtn.classList.add('hidden');
-            calculatedBtn.classList.add('hidden');
-            feedbackMessage.className = 'mt-4 h-8 text-2xl font-semibold transition-opacity duration-300 flex-shrink-0';
-            const problemToUpdate = problems.find(p => p.num1 === currentProblem.num1 && p.num2 === currentProblem.num2);
-
-            if (userAnswer === currentProblem.answer) {
-                correctInSession++;
-                feedbackMessage.textContent = 'Goed zo! 🎉';
-                feedbackMessage.classList.add('text-[#AD56C4]');
-                if (isCalculated && problemToUpdate) {
-                    problemToUpdate.calculated++;
-                }
-            } else {
-                incorrectInSession++;
-                feedbackMessage.textContent = `Niet helemaal! Het antwoord is ${currentProblem.answer}.`;
-                feedbackMessage.classList.add('text-[#FF8DA1]');
-                if (problemToUpdate) {
-                    problemToUpdate.mistakes++;
-                }
-            }
-            saveProgress();
-            updateHardestProblemsList();
-            updateSessionDisplay();
-            setTimeout(generateProblem, 500);
-        }
-
-        function updateHardestProblemsList() {
-            const mistakes = problems.filter(p => p.mistakes > 0 || p.calculated > 0).sort((a, b) => (b.mistakes * 3 + b.calculated) - (a.mistakes * 3 + a.calculated)).slice(0, 10);
-            hardestProblemsList.innerHTML = '';
-            if (mistakes.length === 0) {
-                hardestProblemsList.innerHTML = '<p class="text-gray-400">Je hebt nog geen fouten gemaakt. Blijf oefenen!</p>';
-                return;
-            }
-            mistakes.forEach(p => {
-                const li = document.createElement('div');
-                li.className = 'flex justify-between items-center bg-gray-800 p-3 rounded-lg';
-                let scoreHtml = '';
-                if (p.mistakes > 0) {
-                    scoreHtml += `<span class="text-[#FF8DA1] font-bold bg-[#FF8DA1]/20 px-3 py-1 rounded-full text-sm">${p.mistakes} fout${p.mistakes > 1 ? 'en' : ''}</span>`;
-                }
-                if (p.calculated > 0) {
-                    scoreHtml += `<span class="text-[#FFC2BA] font-bold bg-[#FFC2BA]/20 px-3 py-1 rounded-full text-sm ml-2">${p.calculated} uitgerekend</span>`;
-                }
-                li.innerHTML = `<span class="font-semibold text-lg">${p.num1} × ${p.num2}</span><div class="flex gap-2">${scoreHtml}</div>`;
-                hardestProblemsList.appendChild(li);
-            });
-        }
-
-        function updateSessionDisplay() {
-            sessionProgressEl.textContent = `Som ${sessionCount} van ${SESSION_LENGTH}`;
-            const correctPercentage = (correctInSession / SESSION_LENGTH) * 100;
-            const incorrectPercentage = (incorrectInSession / SESSION_LENGTH) * 100;
-            correctProgressEl.style.width = `${correctPercentage}%`;
-            incorrectProgressEl.style.width = `${incorrectPercentage}%`;
-        }
-
-        function endSession() {
-            practiceSection.classList.add('hidden');
-            sessionEndSection.classList.remove('hidden');
-        }
-
-        function startNewSession() {
-            sessionCount = 0;
-            correctInSession = 0;
-            incorrectInSession = 0;
-            sessionEndSection.classList.add('hidden');
-            practiceSection.classList.remove('hidden');
-            feedbackMessage.textContent = '';
-            updateSessionDisplay();
-            generateProblem();
-        }
-
-        function resetScores() {
-            if (confirm('Weet je zeker dat je al je scores wilt wissen? Je voortgang gaat verloren.')) {
-                localStorage.removeItem('multiplicationProblems');
-                initializeProblems();
-                updateHardestProblemsList();
-                startNewSession();
-            }
-        }
-
-        // --- Event Listeners ---
-        knowItBtn.addEventListener('click', () => handleAnswer(false));
-        calculatedBtn.addEventListener('click', () => handleAnswer(true));
-        newSessionBtn.addEventListener('click', startNewSession);
-
-        answerInput.addEventListener('keydown', e => {
-            if (e.key === 'Enter' && !knowItBtn.classList.contains('hidden')) {
-                handleAnswer(false);
-            }
-        });
-
-        window.addEventListener('keydown', e => {
-            if (e.key >= '0' && e.key <= '9' && !practiceSection.classList.contains('hidden')) {
-                if (document.activeElement !== answerInput) {
-                    answerInput.focus();
-                }
-            }
-        });
-
-        // Keypad logic
-        keypad.addEventListener('click', (e) => {
-            const key = e.target.closest('.keypad-btn')?.dataset?.key;
-            if (key) {
-                mobileAnswer += key;
-                mobileAnswerDisplay.textContent = mobileAnswer;
-            }
-        });
-
-        backspaceBtn.addEventListener('click', () => {
-            mobileAnswer = mobileAnswer.slice(0, -1);
-            mobileAnswerDisplay.textContent = mobileAnswer;
-        });
-
-        resetBtn.addEventListener('click', resetScores);
-
-        toggleStatsBtn.addEventListener('click', () => {
-            statsSection.classList.toggle('hidden');
-            toggleStatsBtn.textContent = statsSection.classList.contains('hidden') ? 'Toon moeilijkste sommen' : 'Verberg moeilijkste sommen';
-        });
-
-        // --- Initial Load ---
-        function startApp() {
-            initializeProblems();
-            updateHardestProblemsList();
-            startNewSession();
-        }
-
-        startApp();
-    </script>
-</body>
-</html>
+                        <input type="number" id="answer-input" class="w-full text-center text-2xl p-3 border-2 bg-gray-800 border-gray-700 text-white placeholder-gray-500 rounded-xl custom-focus-ring transition duration-200 mb-4 hidden md:block" placeholder="Antwo
